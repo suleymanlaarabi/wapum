@@ -16,7 +16,7 @@ To run Wapum locally:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/wapum.git
+   git clone https://github.com/suleymanlaarabidev/wapum.git
    ```
 2. Navigate to the project folder:
    ```
@@ -30,7 +30,7 @@ To run Wapum locally:
    ```
    npm run dev
    ```
-5. Open your browser to `http://localhost:3000` and explore the app.
+5. Open your browser to `http://localhost:5173` and explore the app.
 
 ## Contributing
 
@@ -42,13 +42,8 @@ We welcome contributions to Wapum. To contribute:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a pull request
 
-## License
-
-Wapum is open source software [licensed as MIT](LICENSE).
-
 ## Connect
 
 Questions or feedback? Reach out to us:
 
-- Email: hello@wapum.co
-- Twitter: [@wapumapp](https://twitter.com/wapumapp)
+- Email: suleyman.laarabi.dev@gmail.com
