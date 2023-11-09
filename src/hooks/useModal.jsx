@@ -1,7 +1,9 @@
 import { useDisclosure } from "@chakra-ui/react";
-const useModal = (ChildModal) => {
+const useModal = (ChildModal, props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const Modal = () => <ChildModal isOpen={isOpen} onClose={onClose} />;
+  const Modal = () => (
+    <ChildModal {...props} isOpen={isOpen} onClose={onClose} />
+  );
   return { Modal, onOpen };
 };
 

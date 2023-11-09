@@ -5,10 +5,10 @@ const PageContainer = ({ children }) => {
   const location = useLocation();
   return (
     <Flex
-      height={"100vh"}
+      minH={"100vh"}
       maxW={"100vw"}
       bg={useColorModeValue("gray.50", "gray.800")}
-      pt={10}
+      py={10}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}

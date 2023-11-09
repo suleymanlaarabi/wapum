@@ -9,23 +9,23 @@ import {
   ModalCloseButton,
   Button,
 } from "@chakra-ui/react";
-const DropZoneModal = ({ onFileChange, isOpen, onClose }) => {
+const DropZoneModal = ({ onFileChange, isOpen, onClose, title }) => {
   return (
     <>
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>{title}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <DropZone onFileChange={onFileChange} />
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button colorScheme="red" mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button variant="ghost">Secondary Action</Button>
+            <Button variant="accent">Save</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

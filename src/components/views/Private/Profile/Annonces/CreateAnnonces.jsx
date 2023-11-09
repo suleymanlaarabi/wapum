@@ -10,6 +10,7 @@ import {
   HStack,
   Progress,
   Spinner,
+  Text,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { DropZone } from "../../../../common/DropZone/DropZone";
@@ -19,25 +20,31 @@ import { useAuth } from "../../../../../hooks/useAuth";
 import useStorage from "../../../../../hooks/useStorage";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
 const CreateAnnonces = () => {
+  const maxImages = 5;
+
   const navigate = useNavigate("/private/annonces/my-annonces");
   const { currentUser } = useAuth();
   const { register, handleSubmit } = useForm();
-  const onFileChange = async (file) => {
-    const randomName = Math.random().toString(36).substring(2);
-    await uploadFile(file, randomName);
-  };
-  const [prevUrl, setPrevUrl] = useState(null);
-  const { uploadFile, url, isLoading } = useStorage();
-  const [isInLoading, setIsInLoading] = useState(false);
   const { createDocument } = useFirestore("annonces");
+  const { uploadFile, url, isLoading } = useStorage();
+
   const [images, setImages] = useState([]);
+  const [prevUrl, setPrevUrl] = useState(null);
+  const [isInLoading, setIsInLoading] = useState(false);
+
   useEffect(() => {
     if (url !== prevUrl) {
       setImages((current) => [...current, url]);
       setPrevUrl(url);
     }
   }, [url, prevUrl]);
+
+  const onFileChange = async (file) => {
+    const randomName = Math.random().toString(36).substring(2);
+    await uploadFile(file, randomName);
+  };
 
   const onSubmit = async (data) => {
     setIsInLoading(true);
@@ -75,10 +82,10 @@ const CreateAnnonces = () => {
         ) : (
           <>
             <FormControl id="title" isRequired>
-              <FormLabel>Titre</FormLabel>
+              <FormLabel>Title</FormLabel>
               <Input
                 type="text"
-                placeholder="Titre"
+                placeholder="Title"
                 {...register("title", { required: true })}
               />
             </FormControl>
@@ -91,33 +98,38 @@ const CreateAnnonces = () => {
               />
             </FormControl>
             <FormControl id="price" isRequired>
-              <FormLabel>Prix</FormLabel>
+              <FormLabel>Price</FormLabel>
               <Input
                 type="number"
-                placeholder="Prix"
+                placeholder="Price"
                 {...register("price", { required: true })}
               />
             </FormControl>
             <FormControl id="category" isRequired>
-              <FormLabel>Catégorie</FormLabel>
+              <FormLabel>Category</FormLabel>
               <Select
-                placeholder="Choisir une catégorie"
+                placeholder="Select category"
                 {...register("category", { required: true })}
               >
-                <option value="cat1">Catégorie 1</option>
-                <option value="cat2">Catégorie 2</option>
-                <option value="cat3">Catégorie 3</option>
+                <option value="smartphone">Smartphone</option>
+                <option value="table">Table</option>
+                <option value="car">Car</option>
               </Select>
             </FormControl>
             <FormControl id="location" isRequired>
-              <FormLabel>Localisation</FormLabel>
+              <FormLabel>Location</FormLabel>
               <Input
                 type="text"
-                placeholder="Localisation"
+                placeholder="Location"
                 {...register("location", { required: true })}
               />
             </FormControl>
-            <DropZone onFileChange={onFileChange} />
+            {images.length < maxImages ? (
+              <DropZone onFileChange={onFileChange} />
+            ) : (
+              <Text>You can only upload up to {maxImages} images</Text>
+            )}
+
             {isLoading && (
               <Flex w={"full"} justifyContent={"center"}>
                 <Spinner />
@@ -130,7 +142,14 @@ const CreateAnnonces = () => {
             </Flex>
 
             <HStack w={"full"} justifyContent={"flex-end"}>
-              <Button colorScheme="red">Cancel</Button>
+              <Button
+                colorScheme="red"
+                onClick={() => {
+                  navigate(-1);
+                }}
+              >
+                Cancel
+              </Button>
               <Button variant={"accent"} type="submit">
                 Create
               </Button>

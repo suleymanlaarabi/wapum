@@ -2,10 +2,10 @@ const Button = {
   variants: {
     // blue button
     accent: {
-      bg: "blue.400",
+      bg: "blue.500",
       color: "white",
       _hover: {
-        bg: "blue.500",
+        bg: "blue.400",
       },
     },
   },
