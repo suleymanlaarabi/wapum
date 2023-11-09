@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Box,
   Flex,
@@ -7,33 +5,40 @@ import {
   useColorModeValue,
   Stack,
   useColorMode,
+  Heading,
+  IconButton,
 } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { useUser } from "../../../context/UserContext";
-import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "../../hooks/useAuth";
+import UserMenu from "./UserMenu";
+import { NavLink } from "react-router-dom";
+import { AddIcon } from "@chakra-ui/icons";
 export default function NavBar() {
-  const user = useUser();
-  const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const { colorMode, toggleColorMode } = useColorMode();
   return (
     <>
       <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
-          <Box>Logo</Box>
+          <NavLink to={"/"}>
+            <Heading fontSize={30}>Wapum</Heading>
+          </NavLink>
 
           <Flex alignItems={"center"}>
             <Stack direction={"row"} spacing={3}>
               <Button onClick={toggleColorMode}>
                 {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
               </Button>
-              {!user && (
-                <Button
-                  onClick={() => {
-                    navigate("/sign-in");
-                  }}
-                >
-                  Login
+              <IconButton
+                as={NavLink}
+                to={"/private/annonces/create-annonces"}
+                icon={<AddIcon />}
+              />
+              {currentUser ? (
+                <UserMenu />
+              ) : (
+                <Button as={NavLink} to="/auth/sign-in">
+                  Sign In
                 </Button>
               )}
             </Stack>

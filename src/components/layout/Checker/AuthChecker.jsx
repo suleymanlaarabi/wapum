@@ -1,13 +1,13 @@
 import { Navigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
-import { useUser } from "../../../context/UserContext";
+import { useAuth } from "../../../hooks/useAuth";
 
 const AuthChecker = () => {
-  const user = useUser();
-  if (user) {
+  const { currentUser } = useAuth();
+  if (currentUser) {
     return <Outlet />;
   } else {
-    return <Navigate to="/login" />;
+    return <Navigate to="/auth/sign-in" />;
   }
 };
 

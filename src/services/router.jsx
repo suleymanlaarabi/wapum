@@ -2,25 +2,32 @@ import { createBrowserRouter } from "react-router-dom";
 import Home from "../components/views/Home/Home";
 import Root from "../components/layout/Root";
 import AuthChecker from "../components/layout/Checker/AuthChecker";
-import Profile from "../components/views/Private/Profile/Profile";
 import SignIn from "../components/views/Auth/Sign/SignIn";
 import SignUp from "../components/views/Auth/Sign/SignUp";
+import { UserProvider } from "../context/UserProvider";
+import UserProfileEdit from "../components/views/Private/Profile/UserProfileEdit";
+import CreateAnnonces from "../components/views/Private/Profile/Annonces/CreateAnnonces";
+import PrivateAnnonces from "../components/views/Private/Profile/Annonces/PrivateAnnonces";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: (
+      <UserProvider>
+        <Root />
+      </UserProvider>
+    ),
     children: [
       {
         path: "/",
         element: <Home />,
       },
       {
-        path: "/sign-in",
+        path: "/auth/sign-in",
         element: <SignIn />,
       },
       {
-        path: "/sign-up",
+        path: "/auth/sign-up",
         element: <SignUp />,
       },
       {
@@ -29,7 +36,15 @@ export const router = createBrowserRouter([
         children: [
           {
             path: "profile",
-            element: <Profile />,
+            element: <UserProfileEdit />,
+          },
+          {
+            path: "annonces/create-annonces",
+            element: <CreateAnnonces />,
+          },
+          {
+            path: "annonces/my-annonces",
+            element: <PrivateAnnonces />,
           },
         ],
       },

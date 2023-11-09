@@ -1,13 +1,9 @@
-"use client";
-
 import {
-  Flex,
   Box,
   FormControl,
   FormLabel,
   Input,
   InputGroup,
-  HStack,
   InputRightElement,
   Stack,
   Button,
@@ -15,6 +11,10 @@ import {
   Text,
   useColorModeValue,
   Center,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
@@ -22,151 +22,158 @@ import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useForm } from "react-hook-form";
+import { useAuth } from "../../../../hooks/useAuth";
 
 export default function SignUp() {
+  const { register: createUser, registerWithGoogle } = useAuth();
   const { register, handleSubmit } = useForm();
-
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState(<></>);
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    if (data.password !== data.confirmPassword) {
+      setErrors(
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>Password</AlertTitle>
+          <AlertDescription>Passwords do not match.</AlertDescription>
+        </Alert>
+      );
+      return;
+    }
+    try {
+      const user = await createUser(data.email, data.password);
+      console.log(user);
+    } catch (error) {
+      setErrors(
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>Oops!</AlertTitle>
+          <AlertDescription>{error.message}</AlertDescription>
+        </Alert>
+      );
+    }
   };
 
   return (
-    <Flex
-      minH={"100vh"}
-      align={"center"}
+    <Stack
       textAlign={"center"}
-      justify={"center"}
-      bg={useColorModeValue("gray.50", "gray.800")}
+      spacing={8}
+      mx={"auto"}
+      maxW={"lg"}
+      py={12}
+      px={6}
+      w={"full"}
     >
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-        <Stack align={"center"}>
-          <Heading fontSize={"4xl"} textAlign={"center"}>
-            Sign up
-          </Heading>
-          <Text fontSize={"lg"} color={"gray.600"}>
-            to enjoy all of our cool features ✌️
-          </Text>
-        </Stack>
-        <Box
-          rounded={"lg"}
-          bg={useColorModeValue("white", "gray.700")}
-          boxShadow={"lg"}
-          p={8}
-        >
-          <Stack as={"form"} onSubmit={handleSubmit(onSubmit)}>
-            <HStack>
-              <Box>
-                <FormControl id="firstName" isRequired>
-                  <FormLabel>First Name</FormLabel>
-                  <Input
-                    {...register("firstName", {
-                      required: true,
-                      maxLength: 20,
-                      minLength: 2,
-                    })}
-                    type="text"
-                  />
-                </FormControl>
-              </Box>
-              <Box>
-                <FormControl id="lastName">
-                  <FormLabel>Last Name</FormLabel>
-                  <Input
-                    {...register("lastName", {
-                      maxLength: 20,
-                      minLength: 2,
-                    })}
-                    type="text"
-                  />
-                </FormControl>
-              </Box>
-            </HStack>
-            <FormControl id="email" isRequired>
-              <FormLabel>Email address</FormLabel>
+      <Stack>
+        <Heading fontSize={"4xl"} textAlign={"center"}>
+          Sign up
+        </Heading>
+        <Text fontSize={"lg"} color={"gray.600"}>
+          to enjoy all of our cool{" "}
+          <Text as={"span"} color={"blue.400"}>
+            features
+          </Text>{" "}
+          ✌️
+        </Text>
+      </Stack>
+      <Box
+        rounded={"lg"}
+        bg={useColorModeValue("white", "gray.700")}
+        boxShadow={"lg"}
+        p={8}
+      >
+        <Stack as={"form"} onSubmit={handleSubmit(onSubmit)}>
+          <FormControl id="email" isRequired>
+            <FormLabel>Email address</FormLabel>
+            <Input
+              {...register("email", {
+                required: true,
+                pattern: /^\S+@\S+$/i,
+              })}
+              type="email"
+            />
+          </FormControl>
+          <FormControl id="password" isRequired>
+            <FormLabel>Password</FormLabel>
+            <InputGroup>
               <Input
-                {...register("email", {
+                {...register("password", {
                   required: true,
-                  pattern: /^\S+@\S+$/i,
+                  minLength: 6,
                 })}
-                type="email"
+                type={showPassword ? "text" : "password"}
               />
-            </FormControl>
-            <FormControl id="password" isRequired>
-              <FormLabel>Password</FormLabel>
-              <InputGroup>
-                <Input
-                  {...register("password", {
-                    required: true,
-                    minLength: 6,
-                  })}
-                  type={showPassword ? "text" : "password"}
-                />
-                <InputRightElement h={"full"}>
-                  <Button
-                    variant={"ghost"}
-                    onClick={() =>
-                      setShowPassword((showPassword) => !showPassword)
-                    }
-                  >
-                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                  </Button>
-                </InputRightElement>
-              </InputGroup>
-            </FormControl>
-            <FormControl id="confirmPassword" isRequired>
-              <FormLabel>Password</FormLabel>
-              <InputGroup>
-                <Input
-                  {...register("confirmPassword", {
-                    required: true,
-                    minLength: 6,
-                  })}
-                  type={showPassword ? "text" : "password"}
-                />
-                <InputRightElement h={"full"}>
-                  <Button
-                    variant={"ghost"}
-                    onClick={() =>
-                      setShowPassword((showPassword) => !showPassword)
-                    }
-                  >
-                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                  </Button>
-                </InputRightElement>
-              </InputGroup>
-            </FormControl>
-            <Stack spacing={10} pt={2}>
-              <Button
-                type="submit"
-                loadingText="Submitting"
-                size="lg"
-                bg={"blue.400"}
-                color={"white"}
-                _hover={{
-                  bg: "blue.500",
-                }}
-              >
-                Sign up
-              </Button>
-            </Stack>
-            <Button w={"full"} variant={"outline"} leftIcon={<FcGoogle />}>
+              <InputRightElement h={"full"}>
+                <Button
+                  variant={"ghost"}
+                  onClick={() =>
+                    setShowPassword((showPassword) => !showPassword)
+                  }
+                >
+                  {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+          </FormControl>
+          <FormControl id="confirmPassword" isRequired>
+            <FormLabel>Password</FormLabel>
+            <InputGroup>
+              <Input
+                {...register("confirmPassword", {
+                  required: true,
+                  minLength: 6,
+                })}
+                type={showPassword ? "text" : "password"}
+              />
+              <InputRightElement h={"full"}>
+                <Button
+                  variant={"ghost"}
+                  onClick={() =>
+                    setShowPassword((showPassword) => !showPassword)
+                  }
+                >
+                  {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+          </FormControl>
+          {errors}
+          <Stack spacing={5} pt={3}>
+            <Button
+              type="submit"
+              loadingText="Submitting"
+              size="lg"
+              bg={"blue.400"}
+              color={"white"}
+              _hover={{
+                bg: "blue.500",
+              }}
+            >
+              Sign up
+            </Button>
+
+            <Button
+              onClick={registerWithGoogle}
+              w={"full"}
+              variant={"outline"}
+              leftIcon={<FcGoogle />}
+            >
               <Center>
                 <Text>Sign in with Google</Text>
               </Center>
             </Button>
-            <Text>
-              Already have an account?{" "}
-              <NavLink to="/sign-in">
-                <Text as={"span"} color={"blue.400"}>
-                  Sign in
-                </Text>
-              </NavLink>
-            </Text>
           </Stack>
-        </Box>
-      </Stack>
-    </Flex>
+          <Text mt={3}>
+            Already have an account?{" "}
+            <NavLink to="/auth/sign-in">
+              <Text as={"span"} color={"blue.400"}>
+                Sign in
+              </Text>
+            </NavLink>
+          </Text>
+        </Stack>
+      </Box>
+    </Stack>
   );
 }

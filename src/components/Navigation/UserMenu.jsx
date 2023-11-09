@@ -9,7 +9,14 @@ import {
   Center,
 } from "@chakra-ui/react";
 
+import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+
 const UserMenu = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
   return (
     <Menu>
       <MenuButton
@@ -34,13 +41,22 @@ const UserMenu = () => {
         </Center>
         <br />
         <Center>
-          <p>Username</p>
+          <MenuItem
+            onClick={() => {
+              navigate("/private/profile");
+            }}
+            w={100}
+            as={Button}
+          >
+            Profile
+          </MenuItem>
         </Center>
         <br />
         <MenuDivider />
-        <MenuItem>Your Servers</MenuItem>
-        <MenuItem>Account Settings</MenuItem>
-        <MenuItem>Logout</MenuItem>
+        <MenuItem as={NavLink} to={"/private/annonces/my-annonces"}>
+          My Annonces
+        </MenuItem>
+        <MenuItem onClick={logout}>Logout</MenuItem>
       </MenuList>
     </Menu>
   );
