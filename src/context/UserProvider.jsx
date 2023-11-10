@@ -7,25 +7,37 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "../../firebase.config";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "./createContext/UserContext";
-import { useToast } from "@chakra-ui/react";
+import { useToast, Spinner, Flex } from "@chakra-ui/react";
 import { firebaseErrorToast } from "../utils/helpers/firebase.helper";
-
+import PageContainer from "../components/layout/Container/PageContainer";
 export const UserProvider = ({ children }) => {
   const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState(null);
   const toast = useToast();
+
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setIsLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
 
   const handleError = (error) => toast(firebaseErrorToast(error));
 
   const handleAuth = async (authMethod, ...params) => {
     try {
       await authMethod(auth, ...params);
-      navigate("/private/profile");
+      navigate(-1);
     } catch (error) {
       handleError(error);
     }
@@ -48,21 +60,21 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  const updateProfile = async ({ displayName, photoURL }) => {
+  const updateUserProfile = async ({ photoURL, displayName }) => {
     try {
-      await updateProfile(auth.currentUser, { displayName, photoURL });
-      setCurrentUser(auth);
+      await updateProfile(auth.currentUser, {
+        photoURL: photoURL ? photoURL : currentUser.photoURL,
+        displayName: displayName ? displayName : currentUser.displayName,
+      });
+      setCurrentUser({
+        ...currentUser,
+        photoURL: photoURL ? photoURL : currentUser.photoURL,
+        displayName: displayName ? displayName : currentUser.displayName,
+      });
     } catch (error) {
       handleError(error);
     }
   };
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) =>
-      setCurrentUser(user)
-    );
-    return unsubscribe;
-  }, []);
 
   return (
     <UserContext.Provider
@@ -72,10 +84,25 @@ export const UserProvider = ({ children }) => {
         registerWithGoogle,
         login,
         logout,
-        updateProfile,
+        updateUserProfile,
       }}
     >
-      {children}
+      {!isLoading ? (
+        children
+      ) : (
+        <>
+          <PageContainer>
+            <Flex
+              w="100%"
+              h="100vh"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Spinner height={100} w={100} />
+            </Flex>
+          </PageContainer>
+        </>
+      )}
     </UserContext.Provider>
   );
 };

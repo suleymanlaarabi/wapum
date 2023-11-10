@@ -8,7 +8,7 @@ const PageContainer = ({ children }) => {
       minH={"100vh"}
       maxW={"100vw"}
       bg={useColorModeValue("gray.50", "gray.800")}
-      py={10}
+      pb={10}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}

@@ -1,55 +1,108 @@
-import { useState } from "react";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  setDoc,
+  deleteDoc,
+  limit,
+  getDoc,
+} from "firebase/firestore";
 import { db } from "../../firebase.config";
-import { collection, doc, setDoc } from "firebase/firestore";
-const useFirestore = (collectionName) => {
-  const [loading, setLoading] = useState(false);
+import { useQuery, useMutation, useQueryClient } from "react-query";
 
-  const getDocumentsByUserEmail = async (userEmail) => {
-    setLoading(true);
+const useFirestore = (collectionName, userEmail, id) => {
+  const queryClient = useQueryClient();
 
+  const executeQuery = async (queryAction) => {
     try {
-      const documents = await db
-        .collection(collectionName)
-        .where("userId", "==", userEmail)
-        .get();
-
-      setLoading(false);
-      return documents;
+      return await queryAction();
     } catch (error) {
-      console.error("Erreur lors de la récupération des documents :", error);
-      setLoading(false);
+      console.error(
+        "Erreur lors de l'exécution de la requête Firestore :",
+        error
+      );
       throw error;
     }
   };
 
-  // Fonction pour créer un document
+  const getDocuments = async () => {
+    const buildQuery = () => {
+      if (id) {
+        return doc(db, collectionName, id); // Construire une requête pour obtenir un document spécifique par ID
+      }
+      if (userEmail) {
+        return query(
+          collection(db, collectionName),
+          where("userId", "==", userEmail)
+        );
+      }
+      return query(collection(db, collectionName), limit(15)); // Requête par défaut pour obtenir les 15 premiers documents
+    };
+
+    return executeQuery(async () => {
+      const q = buildQuery();
+
+      if (id) {
+        // Si un id est fourni, récupérez un seul document
+        const docSnapshot = await getDoc(q);
+        if (docSnapshot.exists()) {
+          return [{ id: docSnapshot.id, ...docSnapshot.data() }];
+        }
+        return [];
+      } else {
+        // Sinon, exécutez une requête normale
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+      }
+    });
+  };
   const createDocument = async (docData) => {
-    setLoading(true);
-    try {
+    return executeQuery(async () => {
       const docRef = await doc(collection(db, collectionName));
-      await setDoc(docRef, docData);
-      setLoading(false);
+      await setDoc(docRef, {
+        ...docData,
+        userId: userEmail,
+      });
       return docRef;
-    } catch (error) {
-      setLoading(false);
-      throw error;
-    }
+    });
   };
 
-  // Fonction pour supprimer un document
-  const deleteDocument = async (userEmail) => {
-    setLoading(true);
-    try {
-      await db.collection(collectionName).doc(userEmail).delete();
-      setLoading(false);
-    } catch (error) {
-      console.error("Erreur lors de la suppression du document :", error);
-      setLoading(false);
-      throw error;
-    }
+  const deleteDocument = async (docId) => {
+    return executeQuery(async () => {
+      await deleteDoc(doc(db, collectionName, docId));
+    });
   };
 
-  return { loading, getDocumentsByUserEmail, createDocument, deleteDocument };
+  const { data, isLoading, isError } = useQuery(
+    [collectionName, userEmail],
+    getDocuments
+  );
+
+  const createMutation = useMutation(createDocument, {
+    onSuccess: () => {
+      queryClient.invalidateQueries([collectionName, userEmail]);
+    },
+  });
+
+  const deleteMutation = useMutation(deleteDocument, {
+    onSuccess: () => {
+      queryClient.invalidateQueries([collectionName, userEmail]);
+    },
+  });
+
+  return {
+    documents: data || [],
+    isLoading,
+    isError,
+    error: isError ? "Erreur lors de la récupération des documents" : null,
+    createDocument: createMutation.mutate,
+    deleteDocument: deleteMutation.mutate,
+  };
 };
 
 export default useFirestore;

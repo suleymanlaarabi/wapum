@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../firebase.config";
-import { useAuth } from "./useAuth";
+import useAuth from "./useAuth";
 
 const useStorage = () => {
   const [isLoading, setIsLoading] = useState(null);
@@ -9,10 +9,13 @@ const useStorage = () => {
   const [url, setUrl] = useState(null);
   const { currentUser } = useAuth();
 
-  const uploadFile = (file, fileName) => {
+  const uploadFile = (file, dir, fileName) => {
     if (file) {
       // Création d'une référence de stockage
-      const storageRef = ref(storage, `users/${currentUser.email}/${fileName}`);
+      const storageRef = ref(
+        storage,
+        `users/${currentUser.email}/${dir}/${fileName}`
+      );
       const uploadTask = uploadBytesResumable(storageRef, file);
       setIsLoading(true);
       uploadTask.on(

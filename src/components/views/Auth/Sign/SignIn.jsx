@@ -14,7 +14,7 @@ import {
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { NavLink } from "react-router-dom";
-import { useAuth } from "../../../../hooks/useAuth";
+import useAuth from "../../../../hooks/useAuth";
 
 export default function SignIn() {
   const { login, registerWithGoogle } = useAuth();

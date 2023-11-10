@@ -9,7 +9,7 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { useAuth } from "../../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import UserMenu from "./UserMenu";
 import { NavLink } from "react-router-dom";
 import { AddIcon } from "@chakra-ui/icons";

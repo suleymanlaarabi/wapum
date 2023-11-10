@@ -22,7 +22,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../../../../hooks/useAuth";
+import useAuth from "../../../../hooks/useAuth";
 
 export default function SignUp() {
   const { register: createUser, registerWithGoogle } = useAuth();

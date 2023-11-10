@@ -9,12 +9,12 @@ import {
   Center,
 } from "@chakra-ui/react";
 
-import { useAuth } from "../../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 
 const UserMenu = () => {
-  const { logout } = useAuth();
+  const { logout, currentUser } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -26,18 +26,12 @@ const UserMenu = () => {
         cursor={"pointer"}
         minW={0}
       >
-        <Avatar
-          size={"sm"}
-          src={"https://avatars.dicebear.com/api/male/username.svg"}
-        />
+        <Avatar size={"sm"} src={currentUser.photoURL} />
       </MenuButton>
       <MenuList alignItems={"center"}>
         <br />
         <Center>
-          <Avatar
-            size={"2xl"}
-            src={"https://avatars.dicebear.com/api/male/username.svg"}
-          />
+          <Avatar size={"2xl"} src={currentUser.photoURL} />
         </Center>
         <br />
         <Center>

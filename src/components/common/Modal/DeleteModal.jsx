@@ -1,4 +1,3 @@
-import { DropZone } from "../DropZone/DropZone";
 import {
   Modal,
   ModalOverlay,
@@ -8,8 +7,9 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
+  Text,
 } from "@chakra-ui/react";
-const DropZoneModal = ({ onFileChange, isOpen, onClose, title }) => {
+const DeleteModal = ({ isOpen, onClose, title, onConfirm }) => {
   return (
     <>
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
@@ -18,19 +18,25 @@ const DropZoneModal = ({ onFileChange, isOpen, onClose, title }) => {
           <ModalHeader>{title}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <DropZone
-              onFileChange={(e) => {
-                onFileChange(e);
-                onClose();
-              }}
-            />
+            <Text>
+              Are you sure you want to delete this? All of the data will be
+              permanantly removed. This action cannot be undone.
+            </Text>
           </ModalBody>
 
           <ModalFooter>
             <Button colorScheme="red" mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button variant="accent">Save</Button>
+            <Button
+              onClick={() => {
+                onConfirm();
+                onClose();
+              }}
+              variant="accent"
+            >
+              Confirm
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -38,4 +44,4 @@ const DropZoneModal = ({ onFileChange, isOpen, onClose, title }) => {
   );
 };
 
-export default DropZoneModal;
+export default DeleteModal;

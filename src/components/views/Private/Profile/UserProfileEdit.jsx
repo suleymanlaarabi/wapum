@@ -13,11 +13,45 @@ import {
 } from "@chakra-ui/react";
 import { SmallCloseIcon } from "@chakra-ui/icons";
 import useModal from "../../../../hooks/useModal";
+import useStorage from "../../../../hooks/useStorage";
+import useAuth from "../../../../hooks/useAuth";
 import DropZoneModal from "../../../common/Modal/DropZoneModal";
+
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useEffect } from "react";
+
 export default function UserProfileEdit() {
+  const defaultProfilePicture =
+    "https://t3.ftcdn.net/jpg/00/64/67/80/360_F_64678017_zUpiZFjj04cnLri7oADnyMH0XBYyQghG.jpg";
+  const { uploadFile, url } = useStorage();
+  const { currentUser, updateUserProfile } = useAuth();
+  const navigate = useNavigate();
+  const onFileChange = async (file) => {
+    await uploadFile(file, "profile", "profile.png");
+  };
+  const [profilePicture, setProfilePicture] = useState(currentUser.photoURL);
+  useEffect(() => {
+    if (url) {
+      setProfilePicture(url);
+    }
+  }, [url]);
   const { Modal, onOpen } = useModal(DropZoneModal, {
     title: "Select profile image",
+    onFileChange: onFileChange,
   });
+
+  const onRemoveProfileImage = async () => {
+    setProfilePicture(defaultProfilePicture);
+  };
+
+  const onSubmit = async () => {
+    console.log(profilePicture, currentUser.photoURL);
+    await updateUserProfile({
+      photoURL: profilePicture !== currentUser.photoURL ? profilePicture : null,
+    });
+  };
+
   return (
     <>
       <Modal />
@@ -31,6 +65,7 @@ export default function UserProfileEdit() {
         boxShadow={"lg"}
         p={6}
         my={2}
+        mt={12}
       >
         <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
           User Profile Edit
@@ -39,9 +74,13 @@ export default function UserProfileEdit() {
           <FormLabel>User Icon</FormLabel>
           <Stack direction={["column", "row"]} spacing={6}>
             <Center>
-              <Avatar size="xl" src="https://bit.ly/sage-adebayo">
+              <Avatar
+                size="xl"
+                src={profilePicture ? profilePicture : defaultProfilePicture}
+              >
                 <AvatarBadge
                   as={IconButton}
+                  onClick={onRemoveProfileImage}
                   size="sm"
                   rounded="full"
                   top="-10px"
@@ -83,24 +122,10 @@ export default function UserProfileEdit() {
           />
         </FormControl>
         <Stack spacing={6} direction={["column", "row"]}>
-          <Button
-            bg={"red.400"}
-            color={"white"}
-            w="full"
-            _hover={{
-              bg: "red.500",
-            }}
-          >
+          <Button w={120} colorScheme="red" onClick={() => navigate(-1)}>
             Cancel
           </Button>
-          <Button
-            bg={"blue.400"}
-            color={"white"}
-            w="full"
-            _hover={{
-              bg: "blue.500",
-            }}
-          >
+          <Button onClick={onSubmit} w="full" variant={"accent"}>
             Submit
           </Button>
         </Stack>

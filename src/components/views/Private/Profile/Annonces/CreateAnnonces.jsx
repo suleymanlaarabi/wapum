@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form";
 import { DropZone } from "../../../../common/DropZone/DropZone";
 import { useState } from "react";
 import useFirestore from "../../../../../hooks/useFirestore";
-import { useAuth } from "../../../../../hooks/useAuth";
+import useAuth from "../../../../../hooks/useAuth";
 import useStorage from "../../../../../hooks/useStorage";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -27,31 +27,30 @@ const CreateAnnonces = () => {
   const navigate = useNavigate("/private/annonces/my-annonces");
   const { currentUser } = useAuth();
   const { register, handleSubmit } = useForm();
-  const { createDocument } = useFirestore("annonces");
+  const { createDocument } = useFirestore("annonces", {
+    email: currentUser ? currentUser.email : "",
+  });
   const { uploadFile, url, isLoading } = useStorage();
 
   const [images, setImages] = useState([]);
-  const [prevUrl, setPrevUrl] = useState(null);
   const [isInLoading, setIsInLoading] = useState(false);
 
   useEffect(() => {
-    if (url !== prevUrl) {
+    if (!images.includes(url) && url) {
       setImages((current) => [...current, url]);
-      setPrevUrl(url);
     }
-  }, [url, prevUrl]);
+  }, [images, url]);
 
   const onFileChange = async (file) => {
     const randomName = Math.random().toString(36).substring(2);
-    await uploadFile(file, randomName);
+    await uploadFile(file, "images", randomName);
   };
 
   const onSubmit = async (data) => {
     setIsInLoading(true);
     await createDocument({
       ...data,
-      userId: currentUser.email,
-      images: images,
+      images,
     });
     navigate("/private/annonces/my-annonces");
     setIsInLoading(false);
@@ -67,6 +66,7 @@ const CreateAnnonces = () => {
         w={"90vw"}
         onSubmit={handleSubmit(onSubmit)}
         gap={5}
+        mt={12}
       >
         <Heading>Create Annonces</Heading>
         {isInLoading ? (

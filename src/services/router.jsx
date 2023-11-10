@@ -8,6 +8,7 @@ import { UserProvider } from "../context/UserProvider";
 import UserProfileEdit from "../components/views/Private/Profile/UserProfileEdit";
 import CreateAnnonces from "../components/views/Private/Profile/Annonces/CreateAnnonces";
 import PrivateAnnonces from "../components/views/Private/Profile/Annonces/PrivateAnnonces";
+import AnnoncePage from "../components/views/Explore/AnnoncePage";
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/annonce/:id",
+        element: <AnnoncePage />,
       },
       {
         path: "/auth/sign-in",
