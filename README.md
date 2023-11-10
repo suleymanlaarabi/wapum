@@ -8,7 +8,6 @@ Welcome to **Wapum** - the cutting-edge marketplace platform where users can eff
 - 🎨 Elegant UI/UX with a responsive design
 - 🔒 Secure authentication and transaction processes
 - 📦 Real-time listing and management of products
-- 🌐 Global access with a local market feel
 
 ## Getting Started
 
