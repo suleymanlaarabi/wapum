@@ -8,8 +8,8 @@ const createToast = (title, description, status) => ({
 });
 
 export const firebaseErrorToast = (error) => {
-  const message = error.message.match(/auth\/(.*)\)/)[1];
-  return createToast("Error", message, "error");
+   
+  return createToast("Error", error.message.match(/auth\/(.*)\)/)[1];, "error");
 };
 
 export const firebaseSuccessToast = (message) => {
