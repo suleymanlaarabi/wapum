@@ -7,7 +7,8 @@ const useStorage = () => {
   const [isLoading, setIsLoading] = useState(null);
   const [error, setError] = useState(null);
   const [url, setUrl] = useState(null);
-  const { currentUser } = useAuth();
+  const auth = useAuth();
+  const { currentUser } = auth || {};
 
   const uploadFile = (file, dir, fileName) => {
     if (file) {
