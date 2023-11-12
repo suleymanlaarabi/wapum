@@ -2,7 +2,7 @@ import { Heading } from "@chakra-ui/react";
 const Transaction = () => {
   return (
     <>
-      <Heading>Transaction</Heading>
+      <Heading>My Transactions</Heading>
     </>
   );
 };
