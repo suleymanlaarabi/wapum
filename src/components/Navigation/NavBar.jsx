@@ -13,6 +13,8 @@ import useAuth from "../../hooks/useAuth";
 import UserMenu from "./UserMenu";
 import { NavLink } from "react-router-dom";
 import { AddIcon } from "@chakra-ui/icons";
+import { MdMessage } from "react-icons/md";
+
 export default function NavBar() {
   const { currentUser } = useAuth();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -35,7 +37,14 @@ export default function NavBar() {
                 icon={<AddIcon />}
               />
               {currentUser ? (
-                <UserMenu />
+                <>
+                  <IconButton
+                    as={NavLink}
+                    to={"/private/messages/conversation-list"}
+                    icon={<MdMessage />}
+                  />
+                  <UserMenu />
+                </>
               ) : (
                 <Button as={NavLink} to="/auth/sign-in">
                   Sign In
