@@ -4,8 +4,14 @@ import AnnonceCard from "../../common/Card/AnnoceCard";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useCallback } from "react";
+import { collection, limit, query } from "firebase/firestore";
+import { db } from "../../../../firebase.config";
 const Home = () => {
-  const { documents } = useFirestore("annonces");
+  const { documents } = useFirestore(
+    "annonces",
+    query(collection(db, "annonces"), limit(15)),
+    ["annonces", "getDefaultAnnonce"]
+  );
 
   const [searchTerm, setSearchTerm] = useState("");
 
