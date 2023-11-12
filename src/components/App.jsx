@@ -4,7 +4,18 @@ import { router } from "../services/router";
 import { defaultTheme } from "../assets/themes/defaultTheme";
 import { QueryClient, QueryClientProvider } from "react-query";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: true,
+      retryDelay: 1000,
+      refetchInterval: 60 * 60 * 12,
+      staleTime: 60 * 60 * 12,
+      refetchOnMount: false,
+    },
+  },
+});
 
 function App() {
   return (
