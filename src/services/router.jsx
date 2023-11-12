@@ -5,10 +5,12 @@ import AuthChecker from "../components/layout/Checker/AuthChecker";
 import SignIn from "../components/views/Auth/Sign/SignIn";
 import SignUp from "../components/views/Auth/Sign/SignUp";
 import { UserProvider } from "../context/UserProvider";
-import UserProfileEdit from "../components/views/Private/Profile/UserProfileEdit";
-import CreateAnnonces from "../components/views/Private/Profile/Annonces/CreateAnnonces";
-import PrivateAnnonces from "../components/views/Private/Profile/Annonces/PrivateAnnonces";
+import CreateAnnonces from "../components/views/Private/Annonces/CreateAnnonces";
+import PrivateAnnonces from "../components/views/Private/Annonces/PrivateAnnonces";
 import AnnoncePage from "../components/views/Explore/AnnoncePage";
+import Profile from "../components/views/Private/Profile/Profile";
+import Conversation from "../components/views/Private/Messages/Conversation";
+import ConversationList from "../components/views/Private/Messages/ConversationList";
 
 export const router = createBrowserRouter([
   {
@@ -41,7 +43,7 @@ export const router = createBrowserRouter([
         children: [
           {
             path: "profile",
-            element: <UserProfileEdit />,
+            element: <Profile />,
           },
           {
             path: "annonces/create-annonces",
@@ -50,6 +52,14 @@ export const router = createBrowserRouter([
           {
             path: "annonces/my-annonces",
             element: <PrivateAnnonces />,
+          },
+          {
+            path: "messages/conversation-list",
+            element: <ConversationList />,
+          },
+          {
+            path: "messages/conversation/:id",
+            element: <Conversation />,
           },
         ],
       },
