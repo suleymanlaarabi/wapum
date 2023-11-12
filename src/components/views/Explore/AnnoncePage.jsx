@@ -20,17 +20,63 @@ import { BiMessageDetail } from "react-icons/bi";
 
 import useFirestore from "../../../hooks/useFirestore";
 import useAuth from "../../../hooks/useAuth";
+
+import { collection, doc, query, where } from "firebase/firestore";
+import { db } from "../../../../firebase.config";
+import { fetchProfileImageUrl } from "../../../utils/helpers/firebase.helper";
+import { useNavigate } from "react-router-dom";
 const AnnoncePage = () => {
+  const navigate = useNavigate();
   const { currentUser } = useAuth();
   const { id } = useParams();
-  const { documents, isLoading } = useFirestore("annonces", null, id);
+  const { documents, isLoading } = useFirestore(
+    "annonces",
+    doc(db, "annonces", id),
+    ["annonces", "getDefaultAnnonce", id]
+  );
+  const {
+    documents: conversations,
+    createDocument: createDocumentInConversations,
+  } = useFirestore(
+    "conversations",
+
+    query(
+      collection(db, "conversations"),
+      where("participants", "array-contains", currentUser.email)
+    ),
+    ["conversations", currentUser.email]
+  );
+
   const { title, description, price, images } = documents[0]
     ? documents[0]
-    : {};
+    : {
+        title: "",
+        description: "",
+        price: "",
+        images: [],
+      };
 
-  // all color used useColorModeValue
   const textColor = useColorModeValue("gray.900", "gray.50");
   const borderColor = useColorModeValue("gray.200", "gray.600");
+
+  const onContactSeller = () => {
+    let isAlreadyInConversation = conversations.find((conversation) =>
+      conversation.participants.find(
+        (participant) => participant === documents[0].userId
+      )
+    );
+    if (isAlreadyInConversation) {
+      navigate(`/private/messages/conversation/${isAlreadyInConversation.id}`);
+    } else {
+      fetchProfileImageUrl(documents[0].userId).then(async (url) => {
+        await createDocumentInConversations({
+          participants: [currentUser.email, documents[0].userId],
+          profileURL: [currentUser.photoURL, url],
+        });
+        navigate(`/private/messages/conversation-list`);
+      });
+    }
+  };
 
   if (isLoading) {
     return <Spinner />;
@@ -105,11 +151,16 @@ const AnnoncePage = () => {
               </Box>
             </Stack>
 
-            <Button colorScheme="green" gap={3}>
-              Contact the seller <BiMessageDetail fontSize={20} />
-            </Button>
-            {currentUser && currentUser.email === documents[0].userId && (
-              <Button variant={"accent"}>Edit</Button>
+            {currentUser && (
+              <>
+                {currentUser.email === documents[0].userId ? (
+                  <Button variant={"accent"}>Edit</Button>
+                ) : (
+                  <Button onClick={onContactSeller} colorScheme="green" gap={3}>
+                    Contact the seller <BiMessageDetail fontSize={20} />
+                  </Button>
+                )}
+              </>
             )}
           </Stack>
         </SimpleGrid>
