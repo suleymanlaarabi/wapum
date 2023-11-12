@@ -5,7 +5,8 @@ const PageContainer = ({ children }) => {
   const location = useLocation();
   return (
     <Flex
-      minH={"100vh"}
+      minH={"93.4vh"}
+      maxH={"93.4vh"}
       maxW={"100vw"}
       bg={useColorModeValue("gray.50", "gray.800")}
       pb={10}
