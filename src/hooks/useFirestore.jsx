@@ -1,18 +1,15 @@
 import {
   collection,
-  query,
-  where,
   getDocs,
   doc,
   setDoc,
   deleteDoc,
-  limit,
   getDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase.config";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 
-const useFirestore = (collectionName, userEmail, id) => {
+const useFirestore = (collectionName, customQuery, key) => {
   const queryClient = useQueryClient();
 
   const executeQuery = async (queryAction) => {
@@ -28,46 +25,27 @@ const useFirestore = (collectionName, userEmail, id) => {
   };
 
   const getDocuments = async () => {
-    const buildQuery = () => {
-      if (id) {
-        return doc(db, collectionName, id); // Construire une requête pour obtenir un document spécifique par ID
-      }
-      if (userEmail) {
-        return query(
-          collection(db, collectionName),
-          where("userId", "==", userEmail)
-        );
-      }
-      return query(collection(db, collectionName), limit(15)); // Requête par défaut pour obtenir les 15 premiers documents
-    };
-
     return executeQuery(async () => {
-      const q = buildQuery();
-
-      if (id) {
-        // Si un id est fourni, récupérez un seul document
-        const docSnapshot = await getDoc(q);
-        if (docSnapshot.exists()) {
-          return [{ id: docSnapshot.id, ...docSnapshot.data() }];
+      const q = customQuery;
+      if (q) {
+        if (q.type == "query") {
+          const querySnapshot = await getDocs(q);
+          return querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+        } else {
+          // just get doc
+          const docRef = await getDoc(q);
+          return [{ id: docRef.id, ...docRef.data() }];
         }
-        return [];
-      } else {
-        // Sinon, exécutez une requête normale
-        const querySnapshot = await getDocs(q);
-        return querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
       }
     });
   };
   const createDocument = async (docData) => {
-    return executeQuery(async () => {
+    return await executeQuery(async () => {
       const docRef = await doc(collection(db, collectionName));
-      await setDoc(docRef, {
-        ...docData,
-        userId: userEmail,
-      });
+      await setDoc(docRef, docData);
       return docRef;
     });
   };
@@ -79,19 +57,25 @@ const useFirestore = (collectionName, userEmail, id) => {
   };
 
   const { data, isLoading, isError } = useQuery(
-    [collectionName, userEmail],
-    getDocuments
+    [collectionName, customQuery],
+    getDocuments,
+    {
+      retry: false,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const createMutation = useMutation(createDocument, {
     onSuccess: () => {
-      queryClient.invalidateQueries([collectionName, userEmail]);
+      queryClient.invalidateQueries(key ? key : [collectionName]);
     },
   });
 
   const deleteMutation = useMutation(deleteDocument, {
     onSuccess: () => {
-      queryClient.invalidateQueries([collectionName, userEmail]);
+      queryClient.invalidateQueries(key ? key : [collectionName]);
     },
   });
 
