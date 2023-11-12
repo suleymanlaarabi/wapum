@@ -8,6 +8,7 @@ Welcome to **Wapum** - the cutting-edge marketplace platform where users can eff
 - 🎨 Elegant UI/UX with a responsive design
 - 🔒 Secure authentication and transaction processes
 - 📦 Real-time listing and management of products
+- 📱 Realtime Messaging with Socket.io
 
 ## Getting Started
 
@@ -23,11 +24,11 @@ To run Wapum locally:
    ```
 3. Install dependencies:
    ```
-   npm install
+   pnpm install
    ```
 4. Start the development server:
    ```
-   npm run dev
+   pnpm run dev
    ```
 5. Open your browser to `http://localhost:5173` and explore the app.
 
