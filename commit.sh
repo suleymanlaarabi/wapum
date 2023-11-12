@@ -1,3 +1,4 @@
+# auto commit script
 git add .
 
 files=$(git diff --name-only --cached)
