@@ -10,6 +10,7 @@ import {
   AvatarBadge,
   IconButton,
   Center,
+  Flex,
 } from "@chakra-ui/react";
 import { SmallCloseIcon } from "@chakra-ui/icons";
 import useModal from "../../../../hooks/useModal";
@@ -20,12 +21,15 @@ import DropZoneModal from "../../../common/Modal/DropZoneModal";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 
 export default function UserProfileEdit() {
+  const { register, handleSubmit } = useForm();
+
   const defaultProfilePicture =
     "https://t3.ftcdn.net/jpg/00/64/67/80/360_F_64678017_zUpiZFjj04cnLri7oADnyMH0XBYyQghG.jpg";
   const { uploadFile, url } = useStorage();
-  const { currentUser, updateUserProfile } = useAuth();
+  const { currentUser, updateUserProfile, resetPassword } = useAuth();
   const navigate = useNavigate();
   const onFileChange = async (file) => {
     await uploadFile(file, "profile", "profile.png");
@@ -45,11 +49,16 @@ export default function UserProfileEdit() {
     setProfilePicture(defaultProfilePicture);
   };
 
-  const onSubmit = async () => {
-    console.log(profilePicture, currentUser.photoURL);
+  const onSubmit = async (data) => {
+    const { displayName } = data;
+    console.log(data);
     await updateUserProfile({
       photoURL: profilePicture !== currentUser.photoURL ? profilePicture : null,
+      displayName: displayName !== currentUser.displayName ? displayName : null,
     });
+  };
+  const onResetPassword = () => {
+    resetPassword(currentUser.email);
   };
 
   return (
@@ -66,6 +75,8 @@ export default function UserProfileEdit() {
         p={6}
         my={2}
         mt={12}
+        as={"form"}
+        onSubmit={handleSubmit(onSubmit)}
       >
         <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
           User Profile Edit
@@ -103,32 +114,26 @@ export default function UserProfileEdit() {
             placeholder="UserName"
             _placeholder={{ color: "gray.500" }}
             type="text"
+            defaultValue={currentUser.displayName}
+            {...register("displayName", {
+              required: true,
+              maxLength: 20,
+              minLength: 3,
+            })}
           />
         </FormControl>
-        <FormControl id="email" isRequired>
-          <FormLabel>Email address</FormLabel>
-          <Input
-            placeholder="your-email@example.com"
-            _placeholder={{ color: "gray.500" }}
-            type="email"
-          />
-        </FormControl>
-        <FormControl id="password" isRequired>
-          <FormLabel>Password</FormLabel>
-          <Input
-            placeholder="password"
-            _placeholder={{ color: "gray.500" }}
-            type="password"
-          />
-        </FormControl>
-        <Stack spacing={6} direction={["column", "row"]}>
+
+        <Button onClick={onResetPassword} w="full">
+          Reset Password
+        </Button>
+        <Flex gap={6}>
           <Button w={120} colorScheme="red" onClick={() => navigate(-1)}>
             Cancel
           </Button>
-          <Button onClick={onSubmit} w="full" variant={"accent"}>
+          <Button type="submit" w="full" variant={"accent"}>
             Submit
           </Button>
-        </Stack>
+        </Flex>
       </Stack>
     </>
   );
