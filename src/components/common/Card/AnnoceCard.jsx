@@ -29,9 +29,7 @@ const AnnoceCard = ({ title, image, price, category, id, userId }) => {
     onConfirm: onConfirmDelete,
   });
 
-  const { deleteDocument } = useFirestore("annonces", {
-    email: currentUser ? currentUser.email : "",
-  });
+  const { deleteDocument } = useFirestore("annonces");
 
   const privateButton = () => {
     if (currentUser) {
