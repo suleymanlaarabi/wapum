@@ -47,3 +47,4 @@ We welcome contributions to Wapum. To contribute:
 Questions or feedback? Reach out to us:
 
 - Email: suleyman.laarabi.dev@gmail.com
+- Portfolio: [suleyman-portfolio](https://suleymanportfolio.web.app)
