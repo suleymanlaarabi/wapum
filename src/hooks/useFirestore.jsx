@@ -63,7 +63,6 @@ const useFirestore = (collectionName, customQuery, key) => {
       retry: false,
       refetchOnMount: true,
       refetchOnReconnect: true,
-      refetchOnWindowFocus: false,
     }
   );
 
