@@ -22,7 +22,6 @@ import useStorage from "../../../../hooks/useStorage";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createToast } from "../../../../utils/helpers/firebase.helper";
-
 const CreateAnnonces = () => {
   const maxImages = 5;
   const toast = useToast();
@@ -186,7 +185,7 @@ const CreateAnnonces = () => {
             </FormControl>
             <Flex gap={5} w={"full"}>
               <FormControl id="city" isRequired>
-                <FormLabel>City</FormLabel>
+                <FormLabel>City and country</FormLabel>
                 <Input
                   type="text"
                   placeholder="City"
@@ -202,22 +201,6 @@ const CreateAnnonces = () => {
                 />
               </FormControl>
             </Flex>
-
-            <FormControl id="country" isRequired>
-              <FormLabel>Country</FormLabel>
-              <Select>
-                <option value="france">France</option>
-                <option value="germany">Germany</option>
-                <option value="spain">Spain</option>
-                <option value="italy">Italy</option>
-                <option value="ireland">Ireland</option>
-                <option value="united kingdom">United Kingdom</option>
-                <option value="united states">United States</option>
-                <option value="canada">Canada</option>
-                <option value="australia">Australia</option>
-                <option value="other">Other</option>
-              </Select>
-            </FormControl>
 
             {images.length < maxImages ? (
               <DropZone onFileChange={onFileChange} />
@@ -236,7 +219,7 @@ const CreateAnnonces = () => {
               ))}
             </Flex>
 
-            <HStack w={"full"} justifyContent={"flex-end"}>
+            <HStack pb={10} w={"full"} justifyContent={"flex-end"}>
               <Button
                 colorScheme="red"
                 onClick={() => {
