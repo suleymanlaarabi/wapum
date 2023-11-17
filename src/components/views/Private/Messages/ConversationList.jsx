@@ -1,4 +1,10 @@
-import { Text, Flex, Button, Avatar } from "@chakra-ui/react";
+import {
+  Text,
+  Flex,
+  Button,
+  Avatar,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import ConversationsNav from "../../../Navigation/Chat/ConversationsNav";
 import useModal from "../../../../hooks/useModal";
 import InputModal from "../../../common/Modal/InputModal";
@@ -46,6 +52,8 @@ const ConversationList = () => {
     placeHolder: "Email",
   });
 
+  const bgColor = useColorModeValue("white.100", "gray.800");
+
   return (
     <>
       <Modal />
@@ -69,6 +77,7 @@ const ConversationList = () => {
               to={`/private/messages/conversation/${conversation.id}}`}
             >
               <Button
+                bg={bgColor}
                 justifyContent={"space-around"}
                 w={"full"}
                 height={75}
