@@ -36,7 +36,6 @@ const useRealtimeFirestore = (collectionName, customQuery, key) => {
     });
   };
 
-  // get realtime update of the query
   useEffect(() => {
     const unsubscribe = onSnapshot(customQuery, (snapshot) => {
       const documents = snapshot.docs.map((doc) => ({
