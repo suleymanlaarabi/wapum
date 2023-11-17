@@ -11,6 +11,7 @@ import AnnoncePage from "../components/views/Explore/AnnoncePage";
 import Profile from "../components/views/Private/Profile/Profile";
 import Conversation from "../components/views/Private/Messages/Conversation";
 import ConversationList from "../components/views/Private/Messages/ConversationList";
+import Test from "../Test";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/test",
+        element: <Test />,
       },
       {
         path: "/annonce/:id",
