@@ -14,7 +14,11 @@ import {
   StackDivider,
   useColorModeValue,
   Spinner,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
 } from "@chakra-ui/react";
+import { ChevronRightIcon } from "@chakra-ui/icons";
 
 import { BiMessageDetail } from "react-icons/bi";
 
@@ -37,17 +41,29 @@ const AnnoncePage = () => {
   const {
     documents: conversations,
     createDocument: createDocumentInConversations,
-  } = useFirestore(
-    "conversations",
+  } = currentUser
+    ? useFirestore(
+        "conversations",
 
-    query(
-      collection(db, "conversations"),
-      where("participants", "array-contains", currentUser.email)
-    ),
-    ["conversations", currentUser.email]
-  );
+        query(
+          collection(db, "conversations"),
+          where("participants", "array-contains", currentUser.email)
+        ),
+        ["conversations", currentUser.email]
+      )
+    : { documents: [], createDocument: () => {} };
 
-  const { title, description, price, images } = documents[0]
+  const {
+    title,
+    description,
+    price,
+    images,
+    type,
+    category,
+    adress,
+    city,
+    zipCode,
+  } = documents[0]
     ? documents[0]
     : {
         title: "",
@@ -130,8 +146,20 @@ const AnnoncePage = () => {
                   textTransform={"uppercase"}
                   mb={"4"}
                 >
-                  Features
+                  Category
                 </Text>
+                <Breadcrumb
+                  spacing="8px"
+                  separator={<ChevronRightIcon color="gray.500" />}
+                >
+                  <BreadcrumbItem>
+                    <BreadcrumbLink>{category.toUpperCase()}</BreadcrumbLink>
+                  </BreadcrumbItem>
+
+                  <BreadcrumbItem>
+                    <BreadcrumbLink>{type}</BreadcrumbLink>
+                  </BreadcrumbItem>
+                </Breadcrumb>
 
                 <SimpleGrid
                   columns={{ base: 1, md: 2 }}
@@ -148,6 +176,9 @@ const AnnoncePage = () => {
                 >
                   Product Details
                 </Text>
+                <Text fontSize={"2xl"}>Adress: {adress}</Text>
+                <Text fontSize={"2xl"}>City: {city}</Text>
+                <Text fontSize={"2xl"}>Zip Code: {zipCode}</Text>
               </Box>
             </Stack>
 
