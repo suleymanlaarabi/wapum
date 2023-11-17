@@ -12,7 +12,7 @@ const ConversationsNav = ({ openModal }) => {
     <>
       <Flex
         height={75}
-        bg={useColorModeValue("white", "gray.700")}
+        bg={useColorModeValue("gray.200", "gray.700")}
         px={4}
         boxShadow="lg"
         alignItems={"center"}
