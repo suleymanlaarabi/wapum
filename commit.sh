@@ -5,7 +5,7 @@ files=$(git diff --name-only --cached)
 
 for file in $files
 do
-  read -p "Entrez le message de commit pour $file: " commit_message
+  read -p "commit pour $file: " commit_message
 
   git commit -m "$commit_message" "$file"
 done
